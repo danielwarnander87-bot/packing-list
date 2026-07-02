@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knoebels Camping Trip — July 2–5, 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --forest: #2D4A35;
+    --bark: #6B4C2A;
+    --amber: #D4891A;
+    --cream: #F5EFE0;
+    --smoke: #E8E0D0;
+    --ash: #9E9080;
+    --char: #1E1A14;
+    --green-check: #3A7D44;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--char);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 0 0 80px 0;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: var(--forest);
+    color: var(--cream);
+    padding: 28px 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,137,26,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: rgba(245,239,224,0.75);
+    margin-bottom: 14px;
+  }
+  .hero-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .badge {
+    background: rgba(245,239,224,0.12);
+    border: 1px solid rgba(245,239,224,0.2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--cream);
+  }
+  .badge strong { color: var(--amber); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    background: var(--bark);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .progress-label {
+    color: var(--cream);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 90px;
+  }
+  .track {
+    flex: 1;
+    height: 6px;
+    background: rgba(245,239,224,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .fill {
+    height: 100%;
+    background: var(--amber);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .pct {
+    color: var(--amber);
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 38px;
+    text-align: right;
+  }
+  .reset-btn {
+    background: none;
+    border: 1px solid rgba(245,239,224,0.3);
+    color: rgba(245,239,224,0.7);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* ── SECTIONS ── */
+  .main { padding: 0 16px; max-width: 680px; margin: 0 auto; }
+
+  .section {
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .section-header {
+    background: var(--forest);
+    color: var(--cream);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-header:hover { background: #3a5c43; }
+  .section-icon { font-size: 18px; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+  .section-count {
+    font-size: 11px;
+    color: rgba(245,239,224,0.65);
+    font-weight: 500;
+  }
+  .section-toggle { font-size: 12px; color: rgba(245,239,224,0.5); }
+
+  .section-body { padding: 4px 0 8px; }
+  .section-body.collapsed { display: none; }
+
+  /* ── ITEMS ── */
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--smoke);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #fafaf7; }
+  .item.checked { background: #f0f7f1; }
+  .item.checked .item-label { text-decoration: line-through; color: var(--ash); }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .item.checked .checkbox {
+    background: var(--green-check);
+    border-color: var(--green-check);
+  }
+  .item.checked .checkbox::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .item-label { font-size: 14px; flex: 1; padding-top: 1px; }
+  .item-note {
+    font-size: 11px;
+    color: var(--ash);
+    display: block;
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  .priority-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 3px;
+  }
+  .tag-critical { background: #fee2e2; color: #b91c1c; }
+  .tag-new { background: #fef3c7; color: #92400e; }
+
+  /* ── TIP BOXES ── */
+  .tip {
+    margin: 4px 12px 8px;
+    background: #fef9ec;
+    border-left: 3px solid var(--amber);
+    border-radius: 0 4px 4px 0;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #6b5820;
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  .footer-note {
+    text-align: center;
+    padding: 28px 16px 0;
+    font-size: 13px;
+    color: var(--ash);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .footer-note strong { color: var(--forest); }
+
+  @media print {
+    .progress-bar { display: none; }
+    body { padding-bottom: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Family Camping Trip</div>
+  <div class="hero-title">Knoebels 2026</div>
+  <div class="hero-sub">Complete packing checklist — check off as you pack</div>
+  <div class="hero-details">
+    <span class="badge"><strong>Site:</strong> BT002 / 004 / 006 / 008 — Bermuda Triangle</span>
+    <span class="badge"><strong>Dates:</strong> July 2–5 · Check-in 3PM</span>
+    <span class="badge"><strong>Family of 5</strong> · Electric Site</span>
+    <span class="badge"><strong>Vehicle:</strong> Honda Pilot + Roof Carrier</span>
+  </div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-label" id="progress-label">0 of 0 packed</div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <div class="pct" id="pct">0%</div>
+  <button class="reset-btn" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="main">
+
+  <!-- 1. SHELTER & SLEEPING -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">⛺</span>
+      <span class="section-title">Shelter & Sleeping</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Coleman 8-person tent + poles, stakes, rainfly & footprint</span><span class="priority-tag tag-critical">Critical</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">4 sleeping mats / pads <span class="item-note">Dan, Lex, Kaydance, Cece</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Asher sleeping solution <span class="item-note">Pack-n-play OR toddler air mattress + padding + fitted sheet</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Pillows — at least 5 (bring 2–3 extras for comfort)</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Sleeping bags OR sheet + blanket/comforter sets — all 5</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra blankets / throws <span class="item-note">For cooler nights or layering</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">2 large tarps <span class="item-note">1 ground under tent · 1 canopy over cooking area</span></span></div>
+      <div class="tip">Lay first tarp under the tent, second as a rain canopy over the cooking / sitting area.</div>
+    </div>
+  </div>
+
+  <!-- 2. POWER & LIGHTING -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">Power & Lighting</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Heavy-duty outdoor extension cord <span class="item-note">50–100 ft recommended</span></span><span class="priority-tag tag-critical">Critical</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Multi-outlet surge protector / power strip <span class="item-note">Min 6 outlets, USB ports a plus</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">3 rechargeable lanterns + charging cables / bases</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Flashlights — 4–6 total including 1–2 headlamps</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Spot lights / area lights <span class="item-note">Confirm all 6 working + charged before leaving</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Box fan or small oscillating fan(s) <span class="item-note">Tent airflow at night</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra batteries + power banks <span class="item-note">For phones, lanterns, walkie talkies</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Phone & device chargers — all family members <span class="item-note">Dan, Lex, Kaydance, Cece</span></span><span class="priority-tag tag-new">Added</span></div>
+      <div class="tip">Electric site = game changer. Run fans overnight, charge everything, and use an electric cooler if you have one.</div>
+    </div>
+  </div>
+
+  <!-- 3. COMMUNICATION & SAFETY -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">🚨</span>
+      <span class="section-title">Communication & Safety</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Walkie talkies — set of 4–6 with fresh / charged batteries</span><span class="priority-tag tag-critical">Critical</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">First aid kit — fully stocked <span class="item-note">Include prescription meds, kid pain reliever, allergy meds</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Whistle or emergency signal device</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Sunscreen, bug spray, after-bite cream</span></div>
+    </div>
+  </div>
+
+  <!-- 4. KITCHEN & COOKING -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">🍳</span>
+      <span class="section-title">Kitchen & Cooking</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">2 pressure cookers + lids, sealing rings/gaskets & racks</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Kitchen knife + sturdy cutting board</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Folding / camping table <span class="item-note">At least 1 dedicated to cooking</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Plates, bowls, cups & utensils for 5 <span class="item-note">Mix of reusable + disposable to reduce dishes</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Large cooler — dedicated to food</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Separate cooler or insulated water jugs + pump <span class="item-note">Drinking water only</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Water bottles — reusable, one per person minimum <span class="item-note">Dan, Lex, Kaydance, Cece + spares</span></span><span class="priority-tag tag-new">Added</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">2–3 buckets for hauling water from spigot to camp</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Water pump / faucet adapter <span class="item-note">If site spigot needs one</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Braised short ribs ingredients <span class="item-note">Scale for 5 people × 4 days + group meal for ~10–15</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Broccoli (frozen florets), rice, broth & seasonings</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Other easy meals & snacks — 4 days <span class="item-note">Breakfast, lunch, quick dinners, kid-friendly snacks</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Milk, toddler drinks & snacks for Asher</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Coffee, tea or adult drinks</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Ice plan — bags of ice or frozen water bottles</span></div>
+    </div>
+  </div>
+
+  <!-- 5. SITE SETUP & TOOLS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">🔧</span>
+      <span class="section-title">Site Setup & Tools</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra camping stakes / spikes (full set beyond tent supply)</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Mallet or hammer for driving stakes</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Additional rope / paracord / guy lines</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Drill + screws + washers <span class="item-note">For securing tarp canopy to frame/table</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Collapsible / step ladder <span class="item-note">Roof carrier access + high setups</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Hatchet or small axe <span class="item-note">For kindling if fires allowed</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Dryer lint for fire starting <span class="item-note">Bring a full zip bag — free and excellent</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Leaf blower <span class="item-note">Quick site cleanup before departure</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Wagon <span class="item-note">Huge for hauling water, gear, or tired kids</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Camping chairs — one per person + extras <span class="item-note">Dan, Lex, Kaydance, Cece + spares for guests</span></span><span class="priority-tag tag-new">Added</span></div>
+    </div>
+  </div>
+
+  <!-- 6. PERSONAL, CLOTHING & KIDS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">👕</span>
+      <span class="section-title">Personal, Clothing & Kids</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Clothing for 4 days per person <span class="item-note">Layers, PJs, rain jackets, quick-dry items</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Water shoes / sandals for water play and shower areas</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Toiletries bag <span class="item-note">Soap, shampoo, toothpaste, toothbrushes, deodorant, hairbrush</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Sunscreen, bug spray, lip balm with SPF</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Towels — at least 2 per person <span class="item-note">One beach, one bath</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Hammock + tree straps / hanging hardware</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Slackline + anchors / ratchet</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Laundry basket + detergent pods <span class="item-note">Laundromat on-site — great for mid-trip refresh</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Multiple rolls of heavy-duty garbage bags</span></div>
+
+      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Asher (1.5 yrs) — Critical</div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Diapers + wipes + diaper cream <span class="item-note">Pack more than you think you need</span></span><span class="priority-tag tag-critical">Critical</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Portable changing pad or mat</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Toddler snacks — puffs, pouches, favorite easy foods</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Comfort items, small toys, books, stuffed animal</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Portable high chair, booster or clip-on seat</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Bottles, sippy cups or special drinking items</span></div>
+
+      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Kaydance (13) & Cece (10)</div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Special requests from the girls <span class="item-note">Books, games, art supplies, etc. — ask tonight</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Waterproof phone cases or dry bags <span class="item-note">If they have phones</span></span></div>
+    </div>
+  </div>
+
+  <!-- 7. CAR PACKING -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">🚙</span>
+      <span class="section-title">Vehicle Packing Strategy</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Inside the Pilot — Priority / Daily Use</div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Tent + footprint + stakes <span class="item-note">In last so it comes out first</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">All sleeping gear, pillows & Asher's pack-n-play</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Both coolers (food + water) — accessible for drive</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">All Asher items (diapers, wipes, snacks, toys, comfort items)</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Kitchen box / tote with pressure cookers, knife, cutting board, plates/utensils</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Power items: extension cord, surge protector, lanterns, fans, chargers</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">First aid kit + walkie talkies + flashlights</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Daily clothes bag — one per person or one family bag</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Camping chairs — inside or secured on top <span class="item-note">If they fit, stash inside for easy first-night access</span></span><span class="priority-tag tag-new">Added</span></div>
+
+      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Roof Cargo Carrier — Bulky / Less Frequent</div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Folding cooking table</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra tarps, wagon, leaf blower</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Collapsible ladder, extra stakes/rope, drill + hardware</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Any large or awkward items that won't fit comfortably inside</span></div>
+    </div>
+  </div>
+
+  <!-- 8. FINAL PRE-DEPARTURE -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-icon">✅</span>
+      <span class="section-title">Final Pre-Departure</span>
+      <span class="section-count" data-section-count></span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Honda Pilot TLC — clean interior, check oil, tires, wipers, lights, fluids, gas</span><span class="priority-tag tag-critical">Critical</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Confirm all 5 family members have what they need</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Weather check — pack rain gear regardless</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Download Knoebels maps or apps if available</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Pack a "first night" bag for immediate access <span class="item-note">Tent, sleeping gear, cooler, power items</span></span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Final walk-around: tires, lights, wipers, fluids, gas</span></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Screenshot Knoebels 10% discount barcode from family group text</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <strong>Bermuda Triangle — BT002, 004, 006, 008 · Check-in Thu July 2 at 3PM · Check-out Sun July 5 at 2PM</strong><br>
+  You've got this, Dan. This trip is going to be good. 🏕️
+</div>
+
+<script>
+  // In-memory state (no localStorage — keeps this reliable in any preview/sandbox context)
+  let checkedState = [];
+
+  function saveState() {
+    checkedState = [...document.querySelectorAll('.item')].map(i => i.classList.contains('checked'));
+  }
+
+  function loadState() {
+    const items = document.querySelectorAll('.item');
+    checkedState.forEach((v, i) => { if (v && items[i]) items[i].classList.add('checked'); });
+  }
+
+  function toggle(el) {
+    el.classList.toggle('checked');
+    updateProgress();
+    saveState();
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all checkboxes?')) return;
+    document.querySelectorAll('.item.checked').forEach(i => i.classList.remove('checked'));
+    updateProgress();
+    saveState();
+  }
+
+  function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const arrow = header.querySelector('.section-toggle');
+    if (body.classList.contains('collapsed')) {
+      body.classList.remove('collapsed');
+      arrow.textContent = '▼';
+    } else {
+      body.classList.add('collapsed');
+      arrow.textContent = '▶';
+    }
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.item');
+    const done = document.querySelectorAll('.item.checked');
+    const total = all.length;
+    const count = done.length;
+    const pct = total ? Math.round((count / total) * 100) : 0;
+
+    document.getElementById('progress-label').textContent = `${count} of ${total} packed`;
+    document.getElementById('fill').style.width = pct + '%';
+    document.getElementById('pct').textContent = pct + '%';
+
+    // Update section counts
+    document.querySelectorAll('.section').forEach(sec => {
+      const items = sec.querySelectorAll('.item');
+      const checked = sec.querySelectorAll('.item.checked');
+      const countEl = sec.querySelector('[data-section-count]');
+      if (countEl) countEl.textContent = `${checked.length}/${items.length}`;
+    });
+  }
+
+  loadState();
+  updateProgress();
+</script>
+</body>
+</html>
