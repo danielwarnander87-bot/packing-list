@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pay Period Budget Checker · Jul 2–16</title>
+<title>Pay Period Budget Checker</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#f4f3ee;color:#0b0b0b;padding:1.5rem;}
 .wrap{max-width:720px;margin:0 auto;}
-h1{font-size:18px;font-weight:500;margin-bottom:4px;}
-.sub{font-size:13px;color:#898781;margin-bottom:1.25rem;}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem;}
-.card{background:#fff;border:0.5px solid #e1e0d9;border-radius:8px;padding:0.85rem 1rem;}
-.card .lbl{font-size:11px;color:#898781;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
-.card .val{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;}
-.card .val.danger{color:#a32d2d;}
-.card .val.success{color:#3b6d11;}
-.card .val.warn{color:#854f0b;}
+.period-nav{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;}
+.nav-btn{background:#fff;border:0.5px solid #c3c2b7;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:#0b0b0b;}
+.nav-btn:hover{background:#f1efe8;border-color:#888780;}
+.nav-btn:disabled{opacity:0.35;cursor:default;}
+.period-title{flex:1;text-align:center;}
+.period-title h1{font-size:16px;font-weight:500;}
+.period-title .sub{font-size:12px;color:#898781;margin-top:2px;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.25rem;}
+.card{background:#fff;border:0.5px solid #e1e0d9;border-radius:8px;padding:0.75rem 1rem;}
+.card .lbl{font-size:10px;color:#898781;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.card .val{font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;}
+.card .val.danger{color:#a32d2d;}.card .val.success{color:#3b6d11;}.card .val.warn{color:#854f0b;}
 .card .sub2{font-size:11px;color:#898781;margin-top:3px;}
 .rent-bar{display:flex;align-items:center;gap:12px;background:#e6f1fb;border:0.5px solid #b5d4f4;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1.25rem;flex-wrap:wrap;}
 .rent-bar .rl{font-size:13px;color:#185fa5;font-weight:500;white-space:nowrap;}
@@ -25,17 +28,12 @@ h1{font-size:18px;font-weight:500;margin-bottom:4px;}
 .rent-bar .rpct{font-size:12px;color:#185fa5;font-variant-numeric:tabular-nums;white-space:nowrap;}
 .swing-box{border-radius:8px;border:0.5px solid #e1e0d9;margin-bottom:1.25rem;overflow:hidden;}
 .swing-hd{padding:0.7rem 1rem;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;display:flex;align-items:center;gap:8px;}
-.swing-hd.green{background:#eaf3de;color:#3b6d11;}
-.swing-hd.red{background:#fcebeb;color:#a32d2d;}
-.swing-hd.warn{background:#faeeda;color:#854f0b;}
+.swing-hd.green{background:#eaf3de;color:#3b6d11;}.swing-hd.red{background:#fcebeb;color:#a32d2d;}.swing-hd.warn{background:#faeeda;color:#854f0b;}
 .swing-body{padding:0.85rem 1rem;background:#fcfcfb;}
 .swing-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:0.5px solid #e1e0d9;}
 .swing-row:last-child{border-bottom:none;}
-.swing-row .sk{color:#52514e;}
-.swing-row .sv{font-variant-numeric:tabular-nums;font-weight:500;}
-.swing-row .sv.g{color:#3b6d11;}
-.swing-row .sv.r{color:#a32d2d;}
-.swing-row .sv.w{color:#854f0b;}
+.swing-row .sk{color:#52514e;}.swing-row .sv{font-variant-numeric:tabular-nums;font-weight:500;}
+.swing-row .sv.g{color:#3b6d11;}.swing-row .sv.r{color:#a32d2d;}.swing-row .sv.w{color:#854f0b;}
 .swing-verdict{font-size:14px;font-weight:500;margin-top:10px;padding-top:10px;border-top:0.5px solid #c3c2b7;}
 .section-hd{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#898781;padding:0.5rem 0 0.4rem;border-bottom:0.5px solid #e1e0d9;margin-bottom:0.5rem;}
 table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1.25rem;}
@@ -66,21 +64,29 @@ input.lbl-in:focus{border-color:#2a78d6;outline:none;background:#fff;}
 </head>
 <body>
 <div class="wrap">
-<h1>Pay period · Jul 2 – Jul 16</h1>
-<div class="sub">Check/uncheck rows to include or exclude · edit any amount · discretionary rows are blank</div>
+
+<div class="period-nav">
+  <button class="nav-btn" id="prevBtn" onclick="changePeriod(-1)" disabled>← prev</button>
+  <div class="period-title">
+    <h1 id="periodTitle"></h1>
+    <div class="sub" id="periodSub"></div>
+  </div>
+  <button class="nav-btn" id="nextBtn" onclick="changePeriod(1)">next →</button>
+</div>
+
 <div class="cards" id="cards"></div>
 <div class="rent-bar">
   <div class="rl">Rent pull goal: $462.50</div>
   <div class="rtrack"><div class="rfill" id="rfill" style="width:0%"></div></div>
   <div class="rpct" id="rpct">$0 / $462.50</div>
 </div>
-<div class="swing-box" id="swingBox">
+<div class="swing-box">
   <div class="swing-hd" id="swingHd"></div>
   <div class="swing-body" id="swingBody"></div>
 </div>
 <div class="section-hd">Income this period</div>
 <div id="incomeSection" style="margin-bottom:1.25rem;"></div>
-<div class="section-hd">Known bills due Jul 2–16</div>
+<div class="section-hd">Known bills</div>
 <table id="billsTable"></table>
 <div class="section-hd">Discretionary / maybe spending</div>
 <table id="discTable"></table>
@@ -90,37 +96,77 @@ input.lbl-in:focus{border-color:#2a78d6;outline:none;background:#fff;}
 </div>
 
 <script>
-const RENT_GOAL=462.50;
-const income=[{id:'i1',label:'Paycheck (Jul 2)',amount:1581.00,included:true}];
-const bills=[
-  {id:'b1',day:'Jul 4',label:'Navy Federal Credit',amount:250.00,included:true},
-  {id:'b2',day:'Jul 5',label:'EZ Pass',amount:110.00,included:true},
-  {id:'b3',day:'Jul 6',label:'Gas (car)',amount:72.50,included:true},
-  {id:'b4',day:'Jul 8',label:'Affirm payment #1',amount:244.00,included:true},
-  {id:'b5',day:'Jul 8',label:'AT&T',amount:77.45,included:true},
-  {id:'b6',day:'Jul 8',label:'Amazon subscription',amount:126.00,included:true},
-  {id:'b7',day:'Jul 8',label:'Gas bill (utility)',amount:49.00,included:true},
-  {id:'b8',day:'Jul 12',label:'Spotify',amount:13.77,included:true},
-  {id:'b9',day:'Jul 13',label:'Affirm payment #2',amount:66.36,included:true},
+const RENT_GOAL = 462.50;
+const PERIODS = [
+  { label:'Jul 2 – Jul 16', sub:'Period 1 of 2 · July', payday:'Jul 2' },
+  { label:'Jul 16 – Jul 30', sub:'Period 2 of 2 · July', payday:'Jul 16' },
 ];
-let disc=[
-  {id:'d1',label:'Groceries',amount:null,included:true},
-  {id:'d2',label:'Eating out',amount:null,included:true},
-  {id:'d3',label:'Kids / misc',amount:null,included:true},
-  {id:'d4',label:'Gas (extra fill)',amount:null,included:false},
+
+const BILL_TEMPLATES = [
+  {id:'b1', day:'Jul 4 / Jul 18', label:'Navy Federal Credit', amount:250.00},
+  {id:'b2', day:'Jul 5 / Jul 19', label:'EZ Pass', amount:110.00},
+  {id:'b3', day:'Jul 6 / Jul 20', label:'Gas (car)', amount:72.50},
+  {id:'b4', day:'Jul 8 / Jul 22', label:'Affirm payment #1', amount:244.00},
+  {id:'b5', day:'Jul 8 / Jul 22', label:'AT&T', amount:77.45},
+  {id:'b6', day:'Jul 8 / Jul 22', label:'Amazon subscription', amount:126.00},
+  {id:'b7', day:'Jul 8 / Jul 22', label:'Gas bill (utility)', amount:49.00},
+  {id:'b8', day:'Jul 12 / Jul 26', label:'Spotify', amount:13.77},
+  {id:'b9', day:'Jul 13 / Jul 27', label:'Affirm payment #2', amount:66.36},
 ];
-let rentPull=[{id:'r1',label:'Rent set aside (this paycheck)',amount:462.50,included:true}];
-let discId=20;
+
+// Per-period state: income, disc overrides, rent, bill overrides
+const state = [
+  {
+    income:[{id:'i1',label:'Paycheck (Jul 2)',amount:1581.00,included:true}],
+    bills: BILL_TEMPLATES.map(b=>({...b,included:true,dayLabel:b.day.split(' / ')[0]})),
+    disc:[
+      {id:'d1',label:'Groceries',amount:null,included:true},
+      {id:'d2',label:'Eating out',amount:null,included:true},
+      {id:'d3',label:'Kids / misc',amount:null,included:true},
+      {id:'d4',label:'Gas (extra fill)',amount:null,included:false},
+    ],
+    rent:[{id:'r1',label:'Rent set aside (this paycheck)',amount:462.50,included:true}],
+  },
+  {
+    income:[{id:'i1',label:'Paycheck (Jul 16)',amount:1581.00,included:true}],
+    bills: BILL_TEMPLATES.map(b=>({...b,included:true,dayLabel:b.day.split(' / ')[1]})),
+    disc:[
+      {id:'d1',label:'Groceries',amount:null,included:true},
+      {id:'d2',label:'Eating out',amount:null,included:true},
+      {id:'d3',label:'Kids / misc',amount:null,included:true},
+      {id:'d4',label:'Gas (extra fill)',amount:null,included:false},
+    ],
+    rent:[{id:'r1',label:'Rent set aside (this paycheck)',amount:462.50,included:true}],
+  },
+];
+
+let discId = 30;
+let periodIdx = 0;
+
+function S(){ return state[periodIdx]; }
 function fmt(n){return'$'+Math.abs(n||0).toFixed(2);}
 function fmtS(n){return(n<0?'-':'')+'$'+Math.abs(n||0).toFixed(2);}
-function totalIncome(){return income.filter(i=>i.included).reduce((s,i)=>s+(i.amount||0),0);}
-function totalBills(){return bills.filter(b=>b.included).reduce((s,b)=>s+(b.amount||0),0);}
-function totalDisc(){return disc.filter(d=>d.included&&d.amount).reduce((s,d)=>s+(d.amount||0),0);}
-function totalRent(){return rentPull.filter(r=>r.included&&r.amount).reduce((s,r)=>s+(r.amount||0),0);}
-function remaining(){return totalIncome()-totalBills()-totalDisc()-totalRent();}
-function render(){renderCards();renderRentBar();renderSwing();renderIncome();renderBills();renderDisc();renderRent();}
+function totalIncome(){return S().income.filter(i=>i.included).reduce((s,i)=>s+(i.amount||0),0);}
+function totalBills(){return S().bills.filter(b=>b.included).reduce((s,b)=>s+(b.amount||0),0);}
+function totalDisc(){return S().disc.filter(d=>d.included&&d.amount).reduce((s,d)=>s+(d.amount||0),0);}
+function totalRent(){return S().rent.filter(r=>r.included&&r.amount).reduce((s,r)=>s+(r.amount||0),0);}
+
+function changePeriod(dir){
+  periodIdx = Math.max(0, Math.min(PERIODS.length-1, periodIdx+dir));
+  document.getElementById('prevBtn').disabled = periodIdx===0;
+  document.getElementById('nextBtn').disabled = periodIdx===PERIODS.length-1;
+  render();
+}
+
+function render(){
+  const p = PERIODS[periodIdx];
+  document.getElementById('periodTitle').textContent = 'Pay period · '+p.label;
+  document.getElementById('periodSub').textContent = p.sub+' · Payday: '+p.payday;
+  renderCards(); renderRentBar(); renderSwing(); renderIncome(); renderBills(); renderDisc(); renderRent();
+}
+
 function renderCards(){
-  const inc=totalIncome(),bil=totalBills(),dis=totalDisc(),ren=totalRent(),rem=remaining();
+  const inc=totalIncome(),bil=totalBills(),dis=totalDisc(),ren=totalRent(),rem=inc-bil-dis-ren;
   document.getElementById('cards').innerHTML=`
     <div class="card"><div class="lbl">Income</div><div class="val success">${fmt(inc)}</div><div class="sub2">this period</div></div>
     <div class="card"><div class="lbl">Bills</div><div class="val">${fmt(bil)}</div><div class="sub2">confirmed</div></div>
@@ -128,74 +174,88 @@ function renderCards(){
     <div class="card"><div class="lbl">Rent pull</div><div class="val ${ren>=RENT_GOAL?'success':'warn'}">${fmt(ren)}</div><div class="sub2">of ${fmt(RENT_GOAL)} goal</div></div>
     <div class="card"><div class="lbl">Left over</div><div class="val ${rem<0?'danger':rem<50?'warn':'success'}">${fmtS(rem)}</div><div class="sub2">after everything</div></div>`;
 }
+
 function renderRentBar(){
   const ren=totalRent(),pct=Math.min(100,(ren/RENT_GOAL)*100);
   document.getElementById('rfill').style.width=pct+'%';
   document.getElementById('rpct').textContent='$'+ren.toFixed(2)+' / $'+RENT_GOAL.toFixed(2);
 }
+
 function renderSwing(){
   const inc=totalIncome(),bil=totalBills(),dis=totalDisc();
-  const afterBillsAndDisc=inc-bil-dis,afterRent=afterBillsAndDisc-RENT_GOAL;
-  const canSwing=afterRent>=0,tight=afterRent>=0&&afterRent<75;
-  let hdClass=canSwing?(tight?'warn':'green'):'red';
-  let hdIcon=canSwing?(tight?'⚠':'✓'):'✗';
-  let hdText=canSwing?(tight?'tight — but doable':'yes — you can swing it'):'no — cannot pull $462.50 as-is';
+  const afterBD=inc-bil-dis, afterRent=afterBD-RENT_GOAL;
+  const canSwing=afterRent>=0, tight=afterRent>=0&&afterRent<75;
+  const hdClass=canSwing?(tight?'warn':'green'):'red';
+  const hdIcon=canSwing?(tight?'⚠':'✓'):'✗';
+  const hdText=canSwing?(tight?'tight — but doable':'yes — you can swing it'):'no — cannot pull $462.50 as-is';
   document.getElementById('swingHd').className='swing-hd '+hdClass;
   document.getElementById('swingHd').innerHTML=`<span>${hdIcon}</span><span>Can you swing the $462.50 pull? ${hdText}</span>`;
   let b=`
     <div class="swing-row"><span class="sk">Paycheck in</span><span class="sv g">${fmt(inc)}</span></div>
     <div class="swing-row"><span class="sk">Confirmed bills</span><span class="sv r">– ${fmt(bil)}</span></div>
     <div class="swing-row"><span class="sk">Discretionary entered</span><span class="sv ${dis>0?'r':''}">– ${dis>0?fmt(dis):'$0.00'}</span></div>
-    <div class="swing-row"><span class="sk">Remaining before rent pull</span><span class="sv ${afterBillsAndDisc<RENT_GOAL?'r':'g'}">${fmtS(afterBillsAndDisc)}</span></div>
+    <div class="swing-row"><span class="sk">Remaining before rent pull</span><span class="sv ${afterBD<RENT_GOAL?'r':'g'}">${fmtS(afterBD)}</span></div>
     <div class="swing-row"><span class="sk">Rent pull goal</span><span class="sv r">– ${fmt(RENT_GOAL)}</span></div>
     <div class="swing-row"><span class="sk">Left after rent pull</span><span class="sv ${afterRent<0?'r':afterRent<75?'w':'g'}">${fmtS(afterRent)}</span></div>`;
   if(!canSwing){
-    const maxDiscCanSpend=Math.max(0,afterBillsAndDisc-RENT_GOAL);
-    b+=`<div class="swing-verdict" style="color:#a32d2d;">You're <strong>${fmt(Math.abs(afterRent))}</strong> short. To hit the goal, cap discretionary at <strong>${fmt(maxDiscCanSpend)}</strong> or reduce a bill.</div>`;
+    b+=`<div class="swing-verdict" style="color:#a32d2d;">You're <strong>${fmt(Math.abs(afterRent))}</strong> short. Cap discretionary at <strong>${fmt(Math.max(0,afterBD-RENT_GOAL))}</strong> or reduce a bill to hit the goal.</div>`;
   } else if(tight){
-    b+=`<div class="swing-verdict" style="color:#854f0b;">You can pull the $462.50 but only <strong>${fmt(afterRent)}</strong> left over — very little cushion. Watch discretionary closely.</div>`;
+    b+=`<div class="swing-verdict" style="color:#854f0b;">You can pull the $462.50 but only <strong>${fmt(afterRent)}</strong> left over — watch discretionary closely.</div>`;
   } else {
-    b+=`<div class="swing-verdict" style="color:#3b6d11;">You've got <strong>${fmt(afterRent)}</strong> to work with after the pull. ${dis===0?'Add discretionary spending above to see your real picture.':'Looking good — keep discretionary in check.'}</div>`;
+    b+=`<div class="swing-verdict" style="color:#3b6d11;">You've got <strong>${fmt(afterRent)}</strong> left after the pull. ${dis===0?'Enter discretionary above to see your real picture.':'Looking good.'}</div>`;
   }
   if(dis===0) b+=`<div style="font-size:12px;color:#898781;margin-top:8px;">Tip: enter discretionary amounts above to see your real picture.</div>`;
   document.getElementById('swingBody').innerHTML=b;
 }
+
 function renderIncome(){
   let h='';
-  income.forEach(i=>{h+=`<div class="income-row"><input type="checkbox" ${i.included?'checked':''} onchange="toggleIncome('${i.id}',this.checked)"><span class="ilbl">${i.label}</span><input class="amt" type="number" step="0.01" value="${i.amount||''}" onchange="updateIncome('${i.id}',this.value)"></div>`;});
+  S().income.forEach(i=>{
+    h+=`<div class="income-row"><input type="checkbox" ${i.included?'checked':''} onchange="toggleIncome('${i.id}',this.checked)"><span class="ilbl">${i.label}</span><input class="amt" type="number" step="0.01" value="${i.amount||''}" onchange="updateIncome('${i.id}',this.value)"></div>`;
+  });
   document.getElementById('incomeSection').innerHTML=h;
 }
-function toggleIncome(id,v){income.find(x=>x.id===id).included=v;render();}
-function updateIncome(id,v){income.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+function toggleIncome(id,v){S().income.find(x=>x.id===id).included=v;render();}
+function updateIncome(id,v){S().income.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+
 function renderBills(){
   let h=`<thead><tr><th class="chk-td"></th><th>Bill</th><th>Due</th><th class="r">Amount</th></tr></thead><tbody>`;
-  bills.forEach((b,i)=>{h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${b.included?'checked':''} onchange="toggleBill('${b.id}',this.checked)"></td><td>${b.label}</td><td><span class="date-tag">${b.day}</span></td><td class="r"><input class="amt" type="number" step="0.01" value="${b.amount||''}" onchange="updateBill('${b.id}',this.value)"></td></tr>`;});
+  S().bills.forEach((b,i)=>{
+    h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${b.included?'checked':''} onchange="toggleBill('${b.id}',this.checked)"></td><td>${b.label}</td><td><span class="date-tag">${b.dayLabel}</span></td><td class="r"><input class="amt" type="number" step="0.01" value="${b.amount||''}" onchange="updateBill('${b.id}',this.value)"></td></tr>`;
+  });
   h+=`</tbody><tfoot><tr class="totrow"><td></td><td colspan="2">Total bills</td><td class="r">${fmt(totalBills())}</td></tr></tfoot>`;
   document.getElementById('billsTable').innerHTML=h;
 }
-function toggleBill(id,v){bills.find(x=>x.id===id).included=v;render();}
-function updateBill(id,v){bills.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+function toggleBill(id,v){S().bills.find(x=>x.id===id).included=v;render();}
+function updateBill(id,v){S().bills.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+
 function renderDisc(){
   let h=`<thead><tr><th class="chk-td"></th><th>Item</th><th class="r">Amount</th><th style="width:28px;"></th></tr></thead><tbody>`;
-  disc.forEach((d,i)=>{h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${d.included?'checked':''} onchange="toggleDisc('${d.id}',this.checked)"></td><td><input class="lbl-in" type="text" value="${d.label}" onchange="updateDiscLabel('${d.id}',this.value)"></td><td class="r"><input class="amt" type="number" step="0.01" value="${d.amount||''}" onchange="updateDisc('${d.id}',this.value)" placeholder="enter amt"></td><td><button class="del-btn" onclick="deleteDisc('${d.id}')">×</button></td></tr>`;});
+  S().disc.forEach((d,i)=>{
+    h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${d.included?'checked':''} onchange="toggleDisc('${d.id}',this.checked)"></td><td><input class="lbl-in" type="text" value="${d.label}" onchange="updateDiscLabel('${d.id}',this.value)"></td><td class="r"><input class="amt" type="number" step="0.01" value="${d.amount||''}" onchange="updateDisc('${d.id}',this.value)" placeholder="enter amt"></td><td><button class="del-btn" onclick="deleteDisc('${d.id}')">×</button></td></tr>`;
+  });
   const tot=totalDisc();
   h+=`</tbody><tfoot><tr class="totrow"><td></td><td>Total discretionary</td><td class="r">${tot>0?fmt(tot):'—'}</td><td></td></tr></tfoot>`;
   document.getElementById('discTable').innerHTML=h;
 }
-function toggleDisc(id,v){disc.find(x=>x.id===id).included=v;render();}
-function updateDisc(id,v){disc.find(x=>x.id===id).amount=parseFloat(v)||null;render();}
-function updateDiscLabel(id,v){disc.find(x=>x.id===id).label=v;}
-function deleteDisc(id){disc=disc.filter(x=>x.id!==id);render();}
-function addDisc(){disc.push({id:'d'+(++discId),label:'',amount:null,included:true});render();}
+function toggleDisc(id,v){S().disc.find(x=>x.id===id).included=v;render();}
+function updateDisc(id,v){S().disc.find(x=>x.id===id).amount=parseFloat(v)||null;render();}
+function updateDiscLabel(id,v){S().disc.find(x=>x.id===id).label=v;}
+function deleteDisc(id){S().disc=S().disc.filter(x=>x.id!==id);render();}
+function addDisc(){S().disc.push({id:'d'+(++discId),label:'',amount:null,included:true});render();}
+
 function renderRent(){
   let h=`<thead><tr><th class="chk-td"></th><th>Item</th><th class="r">Amount</th></tr></thead><tbody>`;
-  rentPull.forEach((r,i)=>{h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${r.included?'checked':''} onchange="toggleRent('${r.id}',this.checked)"></td><td>${r.label}</td><td class="r"><input class="amt" type="number" step="0.01" value="${r.amount||''}" onchange="updateRent('${r.id}',this.value)"></td></tr>`;});
+  S().rent.forEach((r,i)=>{
+    h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${r.included?'checked':''} onchange="toggleRent('${r.id}',this.checked)"></td><td>${r.label}</td><td class="r"><input class="amt" type="number" step="0.01" value="${r.amount||''}" onchange="updateRent('${r.id}',this.value)"></td></tr>`;
+  });
   const tot=totalRent(),gap=RENT_GOAL-tot;
   h+=`</tbody><tfoot><tr class="totrow"><td></td><td>${gap>0.005?'<span style="color:#854f0b;">$'+gap.toFixed(2)+' short of goal</span>':'<span style="color:#3b6d11;">goal met ✓</span>'}</td><td class="r">${fmt(tot)}</td></tr></tfoot>`;
   document.getElementById('rentTable').innerHTML=h;
 }
-function toggleRent(id,v){rentPull.find(x=>x.id===id).included=v;render();}
-function updateRent(id,v){rentPull.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+function toggleRent(id,v){S().rent.find(x=>x.id===id).included=v;render();}
+function updateRent(id,v){S().rent.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+
 render();
 </script>
 </body>
