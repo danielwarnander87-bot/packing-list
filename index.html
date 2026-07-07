@@ -3,541 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Knoebels Camping Trip — July 2–5, 2026</title>
+<title>Pay Period Budget Checker · Jul 2–16</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --forest: #2D4A35;
-    --bark: #6B4C2A;
-    --amber: #D4891A;
-    --cream: #F5EFE0;
-    --smoke: #E8E0D0;
-    --ash: #9E9080;
-    --char: #1E1A14;
-    --green-check: #3A7D44;
-  }
-
-  body {
-    background: var(--cream);
-    color: var(--char);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
-    padding: 0 0 80px 0;
-  }
-
-  /* ── HEADER ── */
-  .hero {
-    background: var(--forest);
-    color: var(--cream);
-    padding: 28px 24px 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -30px; right: -40px;
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(212,137,26,0.25) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--amber);
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
-    letter-spacing: 0.04em;
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-  .hero-sub {
-    font-size: 13px;
-    color: rgba(245,239,224,0.75);
-    margin-bottom: 14px;
-  }
-  .hero-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .badge {
-    background: rgba(245,239,224,0.12);
-    border: 1px solid rgba(245,239,224,0.2);
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 12px;
-    color: var(--cream);
-  }
-  .badge strong { color: var(--amber); }
-
-  /* ── PROGRESS BAR ── */
-  .progress-bar {
-    background: var(--bark);
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  .progress-label {
-    color: var(--cream);
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    min-width: 90px;
-  }
-  .track {
-    flex: 1;
-    height: 6px;
-    background: rgba(245,239,224,0.2);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .fill {
-    height: 100%;
-    background: var(--amber);
-    border-radius: 3px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-  .pct {
-    color: var(--amber);
-    font-size: 13px;
-    font-weight: 600;
-    min-width: 38px;
-    text-align: right;
-  }
-  .reset-btn {
-    background: none;
-    border: 1px solid rgba(245,239,224,0.3);
-    color: rgba(245,239,224,0.7);
-    border-radius: 4px;
-    padding: 3px 8px;
-    font-size: 11px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
-  .reset-btn:hover { border-color: var(--amber); color: var(--amber); }
-
-  /* ── SECTIONS ── */
-  .main { padding: 0 16px; max-width: 680px; margin: 0 auto; }
-
-  .section {
-    margin-top: 20px;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
-  .section-header {
-    background: var(--forest);
-    color: var(--cream);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .section-header:hover { background: #3a5c43; }
-  .section-icon { font-size: 18px; }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 19px;
-    letter-spacing: 0.05em;
-    flex: 1;
-  }
-  .section-count {
-    font-size: 11px;
-    color: rgba(245,239,224,0.65);
-    font-weight: 500;
-  }
-  .section-toggle { font-size: 12px; color: rgba(245,239,224,0.5); }
-
-  .section-body { padding: 4px 0 8px; }
-  .section-body.collapsed { display: none; }
-
-  /* ── ITEMS ── */
-  .item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 9px 16px;
-    border-bottom: 1px solid var(--smoke);
-    cursor: pointer;
-    transition: background 0.1s;
-  }
-  .item:last-child { border-bottom: none; }
-  .item:hover { background: #fafaf7; }
-  .item.checked { background: #f0f7f1; }
-  .item.checked .item-label { text-decoration: line-through; color: var(--ash); }
-
-  .checkbox {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    flex-shrink: 0;
-    margin-top: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-  .item.checked .checkbox {
-    background: var(--green-check);
-    border-color: var(--green-check);
-  }
-  .item.checked .checkbox::after {
-    content: '✓';
-    color: white;
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .item-label { font-size: 14px; flex: 1; padding-top: 1px; }
-  .item-note {
-    font-size: 11px;
-    color: var(--ash);
-    display: block;
-    margin-top: 2px;
-    font-style: italic;
-  }
-
-  .priority-tag {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 2px 6px;
-    border-radius: 3px;
-    flex-shrink: 0;
-    align-self: flex-start;
-    margin-top: 3px;
-  }
-  .tag-critical { background: #fee2e2; color: #b91c1c; }
-  .tag-new { background: #fef3c7; color: #92400e; }
-
-  /* ── TIP BOXES ── */
-  .tip {
-    margin: 4px 12px 8px;
-    background: #fef9ec;
-    border-left: 3px solid var(--amber);
-    border-radius: 0 4px 4px 0;
-    padding: 8px 12px;
-    font-size: 12px;
-    color: #6b5820;
-    line-height: 1.5;
-  }
-
-  /* ── FOOTER ── */
-  .footer-note {
-    text-align: center;
-    padding: 28px 16px 0;
-    font-size: 13px;
-    color: var(--ash);
-    max-width: 680px;
-    margin: 0 auto;
-  }
-  .footer-note strong { color: var(--forest); }
-
-  @media print {
-    .progress-bar { display: none; }
-    body { padding-bottom: 0; }
-  }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,sans-serif;background:#f4f3ee;color:#0b0b0b;padding:1.5rem;}
+.wrap{max-width:720px;margin:0 auto;}
+h1{font-size:18px;font-weight:500;margin-bottom:4px;}
+.sub{font-size:13px;color:#898781;margin-bottom:1.25rem;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem;}
+.card{background:#fff;border:0.5px solid #e1e0d9;border-radius:8px;padding:0.85rem 1rem;}
+.card .lbl{font-size:11px;color:#898781;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.card .val{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;}
+.card .val.danger{color:#a32d2d;}
+.card .val.success{color:#3b6d11;}
+.card .val.warn{color:#854f0b;}
+.card .sub2{font-size:11px;color:#898781;margin-top:3px;}
+.rent-bar{display:flex;align-items:center;gap:12px;background:#e6f1fb;border:0.5px solid #b5d4f4;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+.rent-bar .rl{font-size:13px;color:#185fa5;font-weight:500;white-space:nowrap;}
+.rent-bar .rtrack{flex:1;min-width:100px;height:8px;background:#d3d1c7;border-radius:4px;overflow:hidden;}
+.rent-bar .rfill{height:100%;border-radius:4px;background:#2a78d6;transition:width 0.3s;}
+.rent-bar .rpct{font-size:12px;color:#185fa5;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.swing-box{border-radius:8px;border:0.5px solid #e1e0d9;margin-bottom:1.25rem;overflow:hidden;}
+.swing-hd{padding:0.7rem 1rem;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;display:flex;align-items:center;gap:8px;}
+.swing-hd.green{background:#eaf3de;color:#3b6d11;}
+.swing-hd.red{background:#fcebeb;color:#a32d2d;}
+.swing-hd.warn{background:#faeeda;color:#854f0b;}
+.swing-body{padding:0.85rem 1rem;background:#fcfcfb;}
+.swing-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:0.5px solid #e1e0d9;}
+.swing-row:last-child{border-bottom:none;}
+.swing-row .sk{color:#52514e;}
+.swing-row .sv{font-variant-numeric:tabular-nums;font-weight:500;}
+.swing-row .sv.g{color:#3b6d11;}
+.swing-row .sv.r{color:#a32d2d;}
+.swing-row .sv.w{color:#854f0b;}
+.swing-verdict{font-size:14px;font-weight:500;margin-top:10px;padding-top:10px;border-top:0.5px solid #c3c2b7;}
+.section-hd{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#898781;padding:0.5rem 0 0.4rem;border-bottom:0.5px solid #e1e0d9;margin-bottom:0.5rem;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1.25rem;}
+th{font-size:10.5px;font-weight:500;color:#898781;text-transform:uppercase;letter-spacing:0.06em;padding:6px 8px;text-align:left;border-bottom:0.5px solid #e1e0d9;}
+th.r{text-align:right;}
+td{padding:5px 8px;border-bottom:0.5px solid #e1e0d9;color:#0b0b0b;vertical-align:middle;}
+td.r{text-align:right;font-variant-numeric:tabular-nums;}
+tr:last-child td{border-bottom:none;}
+tr.alt{background:#fcfcfb;}
+.date-tag{font-size:11px;color:#898781;background:#f1efe8;border-radius:4px;padding:1px 5px;}
+input[type=checkbox]{accent-color:#2a78d6;width:15px;height:15px;cursor:pointer;}
+input.amt{background:transparent;border:0.5px solid transparent;border-radius:4px;color:#0b0b0b;font-size:13px;width:85px;text-align:right;padding:3px 5px;font-variant-numeric:tabular-nums;}
+input.amt:hover{border-color:#c3c2b7;}
+input.amt:focus{border-color:#2a78d6;outline:none;background:#fff;}
+input.lbl-in{background:transparent;border:0.5px solid transparent;border-radius:4px;color:#0b0b0b;font-size:13px;width:100%;padding:3px 5px;}
+input.lbl-in:hover{border-color:#c3c2b7;}
+input.lbl-in:focus{border-color:#2a78d6;outline:none;background:#fff;}
+.add-btn{font-size:12px;color:#898781;background:transparent;border:0.5px dashed #c3c2b7;border-radius:8px;padding:5px 14px;cursor:pointer;width:100%;margin-bottom:1rem;}
+.add-btn:hover{color:#2a78d6;border-color:#2a78d6;}
+.del-btn{background:none;border:none;color:#898781;cursor:pointer;font-size:15px;padding:2px 6px;line-height:1;}
+.del-btn:hover{color:#a32d2d;}
+.totrow td{font-weight:500;background:#f1efe8;font-size:13px;border-top:0.5px solid #c3c2b7;}
+.income-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid #e1e0d9;}
+.income-row:last-child{border-bottom:none;}
+.income-row .ilbl{font-size:13px;flex:1;}
+.chk-td{width:28px;text-align:center;}
 </style>
 </head>
 <body>
-
-<div class="hero">
-  <div class="hero-eyebrow">Family Camping Trip</div>
-  <div class="hero-title">Knoebels 2026</div>
-  <div class="hero-sub">Complete packing checklist — check off as you pack</div>
-  <div class="hero-details">
-    <span class="badge"><strong>Site:</strong> BT002 / 004 / 006 / 008 — Bermuda Triangle</span>
-    <span class="badge"><strong>Dates:</strong> July 2–5 · Check-in 3PM</span>
-    <span class="badge"><strong>Family of 5</strong> · Electric Site</span>
-    <span class="badge"><strong>Vehicle:</strong> Honda Pilot + Roof Carrier</span>
-  </div>
+<div class="wrap">
+<h1>Pay period · Jul 2 – Jul 16</h1>
+<div class="sub">Check/uncheck rows to include or exclude · edit any amount · discretionary rows are blank</div>
+<div class="cards" id="cards"></div>
+<div class="rent-bar">
+  <div class="rl">Rent pull goal: $462.50</div>
+  <div class="rtrack"><div class="rfill" id="rfill" style="width:0%"></div></div>
+  <div class="rpct" id="rpct">$0 / $462.50</div>
 </div>
-
-<div class="progress-bar">
-  <div class="progress-label" id="progress-label">0 of 0 packed</div>
-  <div class="track"><div class="fill" id="fill"></div></div>
-  <div class="pct" id="pct">0%</div>
-  <button class="reset-btn" onclick="resetAll()">Reset</button>
+<div class="swing-box" id="swingBox">
+  <div class="swing-hd" id="swingHd"></div>
+  <div class="swing-body" id="swingBody"></div>
 </div>
-
-<div class="main">
-
-  <!-- 1. SHELTER & SLEEPING -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">⛺</span>
-      <span class="section-title">Shelter & Sleeping</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Coleman 8-person tent + poles, stakes, rainfly & footprint</span><span class="priority-tag tag-critical">Critical</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">4 sleeping mats / pads <span class="item-note">Dan, Lex, Kaydance, Cece</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Asher sleeping solution <span class="item-note">Pack-n-play OR toddler air mattress + padding + fitted sheet</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Pillows — at least 5 (bring 2–3 extras for comfort)</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Sleeping bags OR sheet + blanket/comforter sets — all 5</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra blankets / throws <span class="item-note">For cooler nights or layering</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">2 large tarps <span class="item-note">1 ground under tent · 1 canopy over cooking area</span></span></div>
-      <div class="tip">Lay first tarp under the tent, second as a rain canopy over the cooking / sitting area.</div>
-    </div>
-  </div>
-
-  <!-- 2. POWER & LIGHTING -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">⚡</span>
-      <span class="section-title">Power & Lighting</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Heavy-duty outdoor extension cord <span class="item-note">50–100 ft recommended</span></span><span class="priority-tag tag-critical">Critical</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Multi-outlet surge protector / power strip <span class="item-note">Min 6 outlets, USB ports a plus</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">3 rechargeable lanterns + charging cables / bases</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Flashlights — 4–6 total including 1–2 headlamps</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Spot lights / area lights <span class="item-note">Confirm all 6 working + charged before leaving</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Box fan or small oscillating fan(s) <span class="item-note">Tent airflow at night</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra batteries + power banks <span class="item-note">For phones, lanterns, walkie talkies</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Phone & device chargers — all family members <span class="item-note">Dan, Lex, Kaydance, Cece</span></span><span class="priority-tag tag-new">Added</span></div>
-      <div class="tip">Electric site = game changer. Run fans overnight, charge everything, and use an electric cooler if you have one.</div>
-    </div>
-  </div>
-
-  <!-- 3. COMMUNICATION & SAFETY -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">🚨</span>
-      <span class="section-title">Communication & Safety</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Walkie talkies — set of 4–6 with fresh / charged batteries</span><span class="priority-tag tag-critical">Critical</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">First aid kit — fully stocked <span class="item-note">Include prescription meds, kid pain reliever, allergy meds</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Whistle or emergency signal device</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Sunscreen, bug spray, after-bite cream</span></div>
-    </div>
-  </div>
-
-  <!-- 4. KITCHEN & COOKING -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">🍳</span>
-      <span class="section-title">Kitchen & Cooking</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">2 pressure cookers + lids, sealing rings/gaskets & racks</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Kitchen knife + sturdy cutting board</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Folding / camping table <span class="item-note">At least 1 dedicated to cooking</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Plates, bowls, cups & utensils for 5 <span class="item-note">Mix of reusable + disposable to reduce dishes</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Large cooler — dedicated to food</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Separate cooler or insulated water jugs + pump <span class="item-note">Drinking water only</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Water bottles — reusable, one per person minimum <span class="item-note">Dan, Lex, Kaydance, Cece + spares</span></span><span class="priority-tag tag-new">Added</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">2–3 buckets for hauling water from spigot to camp</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Water pump / faucet adapter <span class="item-note">If site spigot needs one</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Braised short ribs ingredients <span class="item-note">Scale for 5 people × 4 days + group meal for ~10–15</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Broccoli (frozen florets), rice, broth & seasonings</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Other easy meals & snacks — 4 days <span class="item-note">Breakfast, lunch, quick dinners, kid-friendly snacks</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Milk, toddler drinks & snacks for Asher</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Coffee, tea or adult drinks</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Ice plan — bags of ice or frozen water bottles</span></div>
-    </div>
-  </div>
-
-  <!-- 5. SITE SETUP & TOOLS -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">🔧</span>
-      <span class="section-title">Site Setup & Tools</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra camping stakes / spikes (full set beyond tent supply)</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Mallet or hammer for driving stakes</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Additional rope / paracord / guy lines</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Drill + screws + washers <span class="item-note">For securing tarp canopy to frame/table</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Collapsible / step ladder <span class="item-note">Roof carrier access + high setups</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Hatchet or small axe <span class="item-note">For kindling if fires allowed</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Dryer lint for fire starting <span class="item-note">Bring a full zip bag — free and excellent</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Leaf blower <span class="item-note">Quick site cleanup before departure</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Wagon <span class="item-note">Huge for hauling water, gear, or tired kids</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Camping chairs — one per person + extras <span class="item-note">Dan, Lex, Kaydance, Cece + spares for guests</span></span><span class="priority-tag tag-new">Added</span></div>
-    </div>
-  </div>
-
-  <!-- 6. PERSONAL, CLOTHING & KIDS -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">👕</span>
-      <span class="section-title">Personal, Clothing & Kids</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Clothing for 4 days per person <span class="item-note">Layers, PJs, rain jackets, quick-dry items</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Water shoes / sandals for water play and shower areas</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Toiletries bag <span class="item-note">Soap, shampoo, toothpaste, toothbrushes, deodorant, hairbrush</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Sunscreen, bug spray, lip balm with SPF</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Towels — at least 2 per person <span class="item-note">One beach, one bath</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Hammock + tree straps / hanging hardware</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Slackline + anchors / ratchet</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Laundry basket + detergent pods <span class="item-note">Laundromat on-site — great for mid-trip refresh</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Multiple rolls of heavy-duty garbage bags</span></div>
-
-      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Asher (1.5 yrs) — Critical</div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Diapers + wipes + diaper cream <span class="item-note">Pack more than you think you need</span></span><span class="priority-tag tag-critical">Critical</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Portable changing pad or mat</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Toddler snacks — puffs, pouches, favorite easy foods</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Comfort items, small toys, books, stuffed animal</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Portable high chair, booster or clip-on seat</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Bottles, sippy cups or special drinking items</span></div>
-
-      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Kaydance (13) & Cece (10)</div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Special requests from the girls <span class="item-note">Books, games, art supplies, etc. — ask tonight</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Waterproof phone cases or dry bags <span class="item-note">If they have phones</span></span></div>
-    </div>
-  </div>
-
-  <!-- 7. CAR PACKING -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">🚙</span>
-      <span class="section-title">Vehicle Packing Strategy</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Inside the Pilot — Priority / Daily Use</div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Tent + footprint + stakes <span class="item-note">In last so it comes out first</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">All sleeping gear, pillows & Asher's pack-n-play</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Both coolers (food + water) — accessible for drive</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">All Asher items (diapers, wipes, snacks, toys, comfort items)</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Kitchen box / tote with pressure cookers, knife, cutting board, plates/utensils</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Power items: extension cord, surge protector, lanterns, fans, chargers</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">First aid kit + walkie talkies + flashlights</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Daily clothes bag — one per person or one family bag</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Camping chairs — inside or secured on top <span class="item-note">If they fit, stash inside for easy first-night access</span></span><span class="priority-tag tag-new">Added</span></div>
-
-      <div style="padding: 10px 16px 4px; font-size: 12px; font-weight: 700; color: var(--bark); text-transform: uppercase; letter-spacing: 0.08em;">Roof Cargo Carrier — Bulky / Less Frequent</div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Folding cooking table</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Extra tarps, wagon, leaf blower</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Collapsible ladder, extra stakes/rope, drill + hardware</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Any large or awkward items that won't fit comfortably inside</span></div>
-    </div>
-  </div>
-
-  <!-- 8. FINAL PRE-DEPARTURE -->
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-      <span class="section-icon">✅</span>
-      <span class="section-title">Final Pre-Departure</span>
-      <span class="section-count" data-section-count></span>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Honda Pilot TLC — clean interior, check oil, tires, wipers, lights, fluids, gas</span><span class="priority-tag tag-critical">Critical</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Confirm all 5 family members have what they need</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Weather check — pack rain gear regardless</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Download Knoebels maps or apps if available</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Pack a "first night" bag for immediate access <span class="item-note">Tent, sleeping gear, cooler, power items</span></span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Final walk-around: tires, lights, wipers, fluids, gas</span></div>
-      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><span class="item-label">Screenshot Knoebels 10% discount barcode from family group text</span></div>
-    </div>
-  </div>
-
-</div>
-
-<div class="footer-note">
-  <strong>Bermuda Triangle — BT002, 004, 006, 008 · Check-in Thu July 2 at 3PM · Check-out Sun July 5 at 2PM</strong><br>
-  You've got this, Dan. This trip is going to be good. 🏕️
+<div class="section-hd">Income this period</div>
+<div id="incomeSection" style="margin-bottom:1.25rem;"></div>
+<div class="section-hd">Known bills due Jul 2–16</div>
+<table id="billsTable"></table>
+<div class="section-hd">Discretionary / maybe spending</div>
+<table id="discTable"></table>
+<button class="add-btn" onclick="addDisc()">+ add item</button>
+<div class="section-hd">Rent pull</div>
+<table id="rentTable"></table>
 </div>
 
 <script>
-  // In-memory state (no localStorage — keeps this reliable in any preview/sandbox context)
-  let checkedState = [];
-
-  function saveState() {
-    checkedState = [...document.querySelectorAll('.item')].map(i => i.classList.contains('checked'));
+const RENT_GOAL=462.50;
+const income=[{id:'i1',label:'Paycheck (Jul 2)',amount:1581.00,included:true}];
+const bills=[
+  {id:'b1',day:'Jul 4',label:'Navy Federal Credit',amount:250.00,included:true},
+  {id:'b2',day:'Jul 5',label:'EZ Pass',amount:110.00,included:true},
+  {id:'b3',day:'Jul 6',label:'Gas (car)',amount:72.50,included:true},
+  {id:'b4',day:'Jul 8',label:'Affirm payment #1',amount:244.00,included:true},
+  {id:'b5',day:'Jul 8',label:'AT&T',amount:77.45,included:true},
+  {id:'b6',day:'Jul 8',label:'Amazon subscription',amount:126.00,included:true},
+  {id:'b7',day:'Jul 8',label:'Gas bill (utility)',amount:49.00,included:true},
+  {id:'b8',day:'Jul 12',label:'Spotify',amount:13.77,included:true},
+  {id:'b9',day:'Jul 13',label:'Affirm payment #2',amount:66.36,included:true},
+];
+let disc=[
+  {id:'d1',label:'Groceries',amount:null,included:true},
+  {id:'d2',label:'Eating out',amount:null,included:true},
+  {id:'d3',label:'Kids / misc',amount:null,included:true},
+  {id:'d4',label:'Gas (extra fill)',amount:null,included:false},
+];
+let rentPull=[{id:'r1',label:'Rent set aside (this paycheck)',amount:462.50,included:true}];
+let discId=20;
+function fmt(n){return'$'+Math.abs(n||0).toFixed(2);}
+function fmtS(n){return(n<0?'-':'')+'$'+Math.abs(n||0).toFixed(2);}
+function totalIncome(){return income.filter(i=>i.included).reduce((s,i)=>s+(i.amount||0),0);}
+function totalBills(){return bills.filter(b=>b.included).reduce((s,b)=>s+(b.amount||0),0);}
+function totalDisc(){return disc.filter(d=>d.included&&d.amount).reduce((s,d)=>s+(d.amount||0),0);}
+function totalRent(){return rentPull.filter(r=>r.included&&r.amount).reduce((s,r)=>s+(r.amount||0),0);}
+function remaining(){return totalIncome()-totalBills()-totalDisc()-totalRent();}
+function render(){renderCards();renderRentBar();renderSwing();renderIncome();renderBills();renderDisc();renderRent();}
+function renderCards(){
+  const inc=totalIncome(),bil=totalBills(),dis=totalDisc(),ren=totalRent(),rem=remaining();
+  document.getElementById('cards').innerHTML=`
+    <div class="card"><div class="lbl">Income</div><div class="val success">${fmt(inc)}</div><div class="sub2">this period</div></div>
+    <div class="card"><div class="lbl">Bills</div><div class="val">${fmt(bil)}</div><div class="sub2">confirmed</div></div>
+    <div class="card"><div class="lbl">Discretionary</div><div class="val">${dis>0?fmt(dis):'—'}</div><div class="sub2">entered</div></div>
+    <div class="card"><div class="lbl">Rent pull</div><div class="val ${ren>=RENT_GOAL?'success':'warn'}">${fmt(ren)}</div><div class="sub2">of ${fmt(RENT_GOAL)} goal</div></div>
+    <div class="card"><div class="lbl">Left over</div><div class="val ${rem<0?'danger':rem<50?'warn':'success'}">${fmtS(rem)}</div><div class="sub2">after everything</div></div>`;
+}
+function renderRentBar(){
+  const ren=totalRent(),pct=Math.min(100,(ren/RENT_GOAL)*100);
+  document.getElementById('rfill').style.width=pct+'%';
+  document.getElementById('rpct').textContent='$'+ren.toFixed(2)+' / $'+RENT_GOAL.toFixed(2);
+}
+function renderSwing(){
+  const inc=totalIncome(),bil=totalBills(),dis=totalDisc();
+  const afterBillsAndDisc=inc-bil-dis,afterRent=afterBillsAndDisc-RENT_GOAL;
+  const canSwing=afterRent>=0,tight=afterRent>=0&&afterRent<75;
+  let hdClass=canSwing?(tight?'warn':'green'):'red';
+  let hdIcon=canSwing?(tight?'⚠':'✓'):'✗';
+  let hdText=canSwing?(tight?'tight — but doable':'yes — you can swing it'):'no — cannot pull $462.50 as-is';
+  document.getElementById('swingHd').className='swing-hd '+hdClass;
+  document.getElementById('swingHd').innerHTML=`<span>${hdIcon}</span><span>Can you swing the $462.50 pull? ${hdText}</span>`;
+  let b=`
+    <div class="swing-row"><span class="sk">Paycheck in</span><span class="sv g">${fmt(inc)}</span></div>
+    <div class="swing-row"><span class="sk">Confirmed bills</span><span class="sv r">– ${fmt(bil)}</span></div>
+    <div class="swing-row"><span class="sk">Discretionary entered</span><span class="sv ${dis>0?'r':''}">– ${dis>0?fmt(dis):'$0.00'}</span></div>
+    <div class="swing-row"><span class="sk">Remaining before rent pull</span><span class="sv ${afterBillsAndDisc<RENT_GOAL?'r':'g'}">${fmtS(afterBillsAndDisc)}</span></div>
+    <div class="swing-row"><span class="sk">Rent pull goal</span><span class="sv r">– ${fmt(RENT_GOAL)}</span></div>
+    <div class="swing-row"><span class="sk">Left after rent pull</span><span class="sv ${afterRent<0?'r':afterRent<75?'w':'g'}">${fmtS(afterRent)}</span></div>`;
+  if(!canSwing){
+    const maxDiscCanSpend=Math.max(0,afterBillsAndDisc-RENT_GOAL);
+    b+=`<div class="swing-verdict" style="color:#a32d2d;">You're <strong>${fmt(Math.abs(afterRent))}</strong> short. To hit the goal, cap discretionary at <strong>${fmt(maxDiscCanSpend)}</strong> or reduce a bill.</div>`;
+  } else if(tight){
+    b+=`<div class="swing-verdict" style="color:#854f0b;">You can pull the $462.50 but only <strong>${fmt(afterRent)}</strong> left over — very little cushion. Watch discretionary closely.</div>`;
+  } else {
+    b+=`<div class="swing-verdict" style="color:#3b6d11;">You've got <strong>${fmt(afterRent)}</strong> to work with after the pull. ${dis===0?'Add discretionary spending above to see your real picture.':'Looking good — keep discretionary in check.'}</div>`;
   }
-
-  function loadState() {
-    const items = document.querySelectorAll('.item');
-    checkedState.forEach((v, i) => { if (v && items[i]) items[i].classList.add('checked'); });
-  }
-
-  function toggle(el) {
-    el.classList.toggle('checked');
-    updateProgress();
-    saveState();
-  }
-
-  function resetAll() {
-    if (!confirm('Reset all checkboxes?')) return;
-    document.querySelectorAll('.item.checked').forEach(i => i.classList.remove('checked'));
-    updateProgress();
-    saveState();
-  }
-
-  function toggleSection(header) {
-    const body = header.nextElementSibling;
-    const arrow = header.querySelector('.section-toggle');
-    if (body.classList.contains('collapsed')) {
-      body.classList.remove('collapsed');
-      arrow.textContent = '▼';
-    } else {
-      body.classList.add('collapsed');
-      arrow.textContent = '▶';
-    }
-  }
-
-  function updateProgress() {
-    const all = document.querySelectorAll('.item');
-    const done = document.querySelectorAll('.item.checked');
-    const total = all.length;
-    const count = done.length;
-    const pct = total ? Math.round((count / total) * 100) : 0;
-
-    document.getElementById('progress-label').textContent = `${count} of ${total} packed`;
-    document.getElementById('fill').style.width = pct + '%';
-    document.getElementById('pct').textContent = pct + '%';
-
-    // Update section counts
-    document.querySelectorAll('.section').forEach(sec => {
-      const items = sec.querySelectorAll('.item');
-      const checked = sec.querySelectorAll('.item.checked');
-      const countEl = sec.querySelector('[data-section-count]');
-      if (countEl) countEl.textContent = `${checked.length}/${items.length}`;
-    });
-  }
-
-  loadState();
-  updateProgress();
+  if(dis===0) b+=`<div style="font-size:12px;color:#898781;margin-top:8px;">Tip: enter discretionary amounts above to see your real picture.</div>`;
+  document.getElementById('swingBody').innerHTML=b;
+}
+function renderIncome(){
+  let h='';
+  income.forEach(i=>{h+=`<div class="income-row"><input type="checkbox" ${i.included?'checked':''} onchange="toggleIncome('${i.id}',this.checked)"><span class="ilbl">${i.label}</span><input class="amt" type="number" step="0.01" value="${i.amount||''}" onchange="updateIncome('${i.id}',this.value)"></div>`;});
+  document.getElementById('incomeSection').innerHTML=h;
+}
+function toggleIncome(id,v){income.find(x=>x.id===id).included=v;render();}
+function updateIncome(id,v){income.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+function renderBills(){
+  let h=`<thead><tr><th class="chk-td"></th><th>Bill</th><th>Due</th><th class="r">Amount</th></tr></thead><tbody>`;
+  bills.forEach((b,i)=>{h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${b.included?'checked':''} onchange="toggleBill('${b.id}',this.checked)"></td><td>${b.label}</td><td><span class="date-tag">${b.day}</span></td><td class="r"><input class="amt" type="number" step="0.01" value="${b.amount||''}" onchange="updateBill('${b.id}',this.value)"></td></tr>`;});
+  h+=`</tbody><tfoot><tr class="totrow"><td></td><td colspan="2">Total bills</td><td class="r">${fmt(totalBills())}</td></tr></tfoot>`;
+  document.getElementById('billsTable').innerHTML=h;
+}
+function toggleBill(id,v){bills.find(x=>x.id===id).included=v;render();}
+function updateBill(id,v){bills.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+function renderDisc(){
+  let h=`<thead><tr><th class="chk-td"></th><th>Item</th><th class="r">Amount</th><th style="width:28px;"></th></tr></thead><tbody>`;
+  disc.forEach((d,i)=>{h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${d.included?'checked':''} onchange="toggleDisc('${d.id}',this.checked)"></td><td><input class="lbl-in" type="text" value="${d.label}" onchange="updateDiscLabel('${d.id}',this.value)"></td><td class="r"><input class="amt" type="number" step="0.01" value="${d.amount||''}" onchange="updateDisc('${d.id}',this.value)" placeholder="enter amt"></td><td><button class="del-btn" onclick="deleteDisc('${d.id}')">×</button></td></tr>`;});
+  const tot=totalDisc();
+  h+=`</tbody><tfoot><tr class="totrow"><td></td><td>Total discretionary</td><td class="r">${tot>0?fmt(tot):'—'}</td><td></td></tr></tfoot>`;
+  document.getElementById('discTable').innerHTML=h;
+}
+function toggleDisc(id,v){disc.find(x=>x.id===id).included=v;render();}
+function updateDisc(id,v){disc.find(x=>x.id===id).amount=parseFloat(v)||null;render();}
+function updateDiscLabel(id,v){disc.find(x=>x.id===id).label=v;}
+function deleteDisc(id){disc=disc.filter(x=>x.id!==id);render();}
+function addDisc(){disc.push({id:'d'+(++discId),label:'',amount:null,included:true});render();}
+function renderRent(){
+  let h=`<thead><tr><th class="chk-td"></th><th>Item</th><th class="r">Amount</th></tr></thead><tbody>`;
+  rentPull.forEach((r,i)=>{h+=`<tr class="${i%2===1?'alt':''}"><td class="chk-td"><input type="checkbox" ${r.included?'checked':''} onchange="toggleRent('${r.id}',this.checked)"></td><td>${r.label}</td><td class="r"><input class="amt" type="number" step="0.01" value="${r.amount||''}" onchange="updateRent('${r.id}',this.value)"></td></tr>`;});
+  const tot=totalRent(),gap=RENT_GOAL-tot;
+  h+=`</tbody><tfoot><tr class="totrow"><td></td><td>${gap>0.005?'<span style="color:#854f0b;">$'+gap.toFixed(2)+' short of goal</span>':'<span style="color:#3b6d11;">goal met ✓</span>'}</td><td class="r">${fmt(tot)}</td></tr></tfoot>`;
+  document.getElementById('rentTable').innerHTML=h;
+}
+function toggleRent(id,v){rentPull.find(x=>x.id===id).included=v;render();}
+function updateRent(id,v){rentPull.find(x=>x.id===id).amount=parseFloat(v)||0;render();}
+render();
 </script>
 </body>
 </html>
